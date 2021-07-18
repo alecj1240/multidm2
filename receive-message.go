@@ -1,10 +1,12 @@
 package main
 
 import (
-    "log"
-    "net/http"
-    "github.com/gorilla/schema"
-    "fmt"
+  "log"
+  "net/http"
+  "github.com/gorilla/schema"
+  "strings"
+  "unicode/utf8"
+  "fmt"
 )
 
 type IncomingMessage struct {
@@ -38,9 +40,47 @@ func receiveMessage(w http.ResponseWriter, r *http.Request){
   }
 
   isUser, userInfo := checkUserExists(response.UserId)
+
   if isUser == true {
-    sendMessage("time to process your message", response.ChannelId, userInfo.UserAccessToken)
+    recipients, message := splitMessage(response.Text)
+    teamUsers := getUsers(userInfo.BotAccessToken)
+
+    for _, recipient := range recipients {
+      for _, teamUser := range teamUsers.Members {
+        if recipient == teamUser.Name {
+          fmt.Println("sending to: " + teamUser.Name)
+          sendMessage(message, teamUser.Id, userInfo.UserAccessToken)
+        }
+      }
+    }
   } else {
     sendEphemeralMessage(response.ResponseUrl, "hey, multidm is installed, but we need permission from you, add it here: https://multidm.alecj1240.repl.co/")
   }
+}
+
+func splitMessage(message string) ([]string, string) {
+  words := strings.Split(message, " ")
+  recipients := make([]string, 0)
+
+  for _, word := range words {
+    characters := strings.Split(word, "")
+    if characters[0] == "@" {
+      recipients = append(recipients, trimFirstCharacter(word))
+    } else {
+      break
+    }
+	}
+
+  for j := 1; j <= len(recipients); j++ {
+    words = words[1:]
+  }
+
+  joinedText := strings.Join(words, " ")
+
+  return recipients, joinedText
+}
+
+func trimFirstCharacter(s string) string {
+	_, i := utf8.DecodeRuneInString(s)
+	return s[i:]
 }
