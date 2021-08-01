@@ -85,7 +85,7 @@ func appAuthorized(w http.ResponseWriter, r *http.Request){
     // redirect to an error page here
 	}
 
-  http.Redirect(w, r, "https://multidm.alecj1240.repl.co/done.html", 301)
+  http.Redirect(w, r, "https://multidm.carrd.co/#done", 301)
 }
 
 func checkUserExists(userId string) (bool, DBUser) {

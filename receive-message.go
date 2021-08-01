@@ -43,7 +43,7 @@ func receiveMessage(w http.ResponseWriter, r *http.Request){
 
   if isUser == true {
     recipients, message := splitMessage(response.Text)
-    teamUsers := getUsers(userInfo.BotAccessToken)
+    teamUsers := getUsers(userInfo.UserAccessToken)
 
     for _, recipient := range recipients {
       for _, teamUser := range teamUsers.Members {
@@ -54,7 +54,7 @@ func receiveMessage(w http.ResponseWriter, r *http.Request){
       }
     }
   } else {
-    sendEphemeralMessage(response.ResponseUrl, "hey, multidm is installed, but we need permission from you, add it here: https://multidm.alecj1240.repl.co/")
+    sendEphemeralMessage(response.ResponseUrl, "hey, multidm is installed for your team, but we need also permission directly from you:  https://multidm.carrd.co/#install")
   }
 }
 
