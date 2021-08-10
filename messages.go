@@ -28,6 +28,7 @@ func multiDM(response IncomingMessage, userInfo DBUser) {
     }
   }
   
+  sendEphemeralMessage(response.ResponseUrl, "Messages sent successfully! You just saved time using MultiDM!");
   return;
 }
 
