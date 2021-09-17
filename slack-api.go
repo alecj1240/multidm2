@@ -6,6 +6,7 @@ import (
     "io/ioutil"
     "encoding/json"
     "bytes"
+    "fmt"
 )
 
 type GetUserResponse struct {
@@ -22,6 +23,19 @@ type User struct {
   Is_Admin bool `json:"is_admin"`
   Is_Owner bool `json:"is_owner"`
   Is_Bot bool `json:"is_bot"`
+}
+
+type UserInfoResponse struct {
+	Ok   bool `json:"ok"`
+	UserInfo struct {
+		ID       string `json:"id"`
+		TeamID   string `json:"team_id"`
+		Name     string `json:"name"`
+		RealName string `json:"real_name"`
+		Tz       string `json:"tz"`
+		TzLabel  string `json:"tz_label"`
+		TzOffset int    `json:"tz_offset"`
+	} `json:"user"`
 }
 
 func getUsers(accessToken string) GetUserResponse {
@@ -45,6 +59,32 @@ func getUsers(accessToken string) GetUserResponse {
   }
 
   var response GetUserResponse	
+  json.Unmarshal(body, &response)
+
+  return response
+}
+
+func getUserInfo(accessToken string, userId string) UserInfoResponse {
+  url := "https://slack.com/api/users.info?user=" + userId
+
+  req, err := http.NewRequest("GET", url, nil)
+  req.Header.Add("Authorization", "Bearer " + accessToken)
+
+  client := &http.Client{}
+  resp, err := client.Do(req)
+
+  if err != nil {
+    log.Println("Error on response.\n[ERROR] -", err)
+  }
+
+  defer resp.Body.Close()
+
+  body, err := ioutil.ReadAll(resp.Body)
+  if err != nil {
+    log.Println("Error while reading the response bytes:", err)
+  }
+
+  var response UserInfoResponse	
   json.Unmarshal(body, &response)
 
   return response
@@ -96,4 +136,33 @@ func sendEphemeralMessage(url string, text string) {
   var res map[string]interface{}
 
   json.NewDecoder(resp.Body).Decode(&res)
+}
+
+func sendDatePicker(text string, channel string, accessToken string) {
+  authStr := "Bearer " + accessToken
+
+  values := map[string]string{
+    "channel": channel, 
+    "text": text,
+    "as_user": "true",
+    "blocks": "{'type': 'section', 'block_id': 'section1234', 'text': { 'type': 'mrkdwn', 'text': 'Pick a date for the deadline.'},'accessory':{'type': 'datepicker', 'action_id': 'datepicker123', 'initial_date': '1990-04-28', 'placeholder': {'type': 'plain_text', 'text': 'Select a date'}}}",
+  }
+  
+  jsonData, err := json.Marshal(values)
+
+  var jsonStr = []byte(jsonData)
+
+  fmt.Println(jsonStr)
+
+	req, err := http.NewRequest("POST", "https://slack.com/api/chat.postMessage", bytes.NewBuffer(jsonStr))
+
+	req.Header.Set("Content-Type", "application/json")
+  req.Header.Set("Authorization", authStr)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
 }

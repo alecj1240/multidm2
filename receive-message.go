@@ -42,10 +42,11 @@ func receiveMessage(w http.ResponseWriter, r *http.Request){
   if isUser == true {
     if (strings.Split(response.Text, " "))[0] == "help" {
       sendHelp(response)
-      return;
+    } else if (strings.Split(response.Text, " "))[0] == "schedule" {
+      scheduleMultiDM(response, userInfo)
+    } else {
+      multiDM(response, userInfo)
     }
-
-    multiDM(response, userInfo)
     return;
   } else {
     sendEphemeralMessage(response.ResponseUrl, "hey, it looks like multidm is installed for your team, but we need also permission directly from you: https://multidm.carrd.co/#install")

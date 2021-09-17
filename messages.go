@@ -15,7 +15,7 @@ func multiDM(response IncomingMessage, userInfo DBUser) {
 
   teamUsers := getUsers(userInfo.UserAccessToken)
   if len(teamUsers.Members) < 1 {
-    sendEphemeralMessage(response.ResponseUrl, "Hey, we can't find any slack team members for you -- you might want to try reinstalling multiDM");
+    sendEphemeralMessage(response.ResponseUrl, "Hey, we can't find any slack team members for you -- you might want to try reinstalling multiDM, https://multidm.carrd.co/#install");
     return;
   }
 
@@ -62,4 +62,10 @@ func trimFirstCharacter(s string) string {
 
 func sendHelp(response IncomingMessage) {
   sendEphemeralMessage(response.ResponseUrl, "Hey, you need some help with MultiDM? No problem! \n The format to send a message is: */multidm @bob @jane this is my message to bob and jane* \n \n if you continue to have trouble, reach out to alecjones@hey.com");
+}
+
+func scheduleMultiDM(response IncomingMessage, userDB DBUser) {
+  //userInfo := getUserInfo(userDB.UserAccessToken, userDB.AuthedUser)
+
+  
 }
