@@ -23,6 +23,6 @@ Use /multidm to send the same message to multiple people
 1. Schedule MultiDMs on a certain time and date
 2. Make a list of recipients, so you could do:
   
-  /multidm @engineering-team hey is this fixed?
+  /multidm @engineering-team hey how did this project go?
 
 ## Thanks For Checking Out MultiDM!
