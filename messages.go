@@ -63,9 +63,3 @@ func trimFirstCharacter(s string) string {
 func sendHelp(response IncomingMessage) {
   sendEphemeralMessage(response.ResponseUrl, "Hey, you need some help with MultiDM? No problem! \n The format to send a message is: */multidm @bob @jane this is my message to bob and jane* \n \n if you continue to have trouble, reach out to alecjones@hey.com");
 }
-
-func scheduleMultiDM(response IncomingMessage, userDB DBUser) {
-  //userInfo := getUserInfo(userDB.UserAccessToken, userDB.AuthedUser)
-
-  
-}

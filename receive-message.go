@@ -42,8 +42,6 @@ func receiveMessage(w http.ResponseWriter, r *http.Request){
   if isUser == true {
     if (strings.Split(response.Text, " "))[0] == "help" {
       sendHelp(response)
-    } else if (strings.Split(response.Text, " "))[0] == "schedule" {
-      scheduleMultiDM(response, userInfo)
     } else {
       multiDM(response, userInfo)
     }
