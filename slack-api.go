@@ -6,7 +6,6 @@ import (
     "io/ioutil"
     "encoding/json"
     "bytes"
-    "fmt"
 )
 
 type GetUserResponse struct {
@@ -136,33 +135,4 @@ func sendEphemeralMessage(url string, text string) {
   var res map[string]interface{}
 
   json.NewDecoder(resp.Body).Decode(&res)
-}
-
-func sendDatePicker(text string, channel string, accessToken string) {
-  authStr := "Bearer " + accessToken
-
-  values := map[string]string{
-    "channel": channel, 
-    "text": text,
-    "as_user": "true",
-    "blocks": "{'type': 'section', 'block_id': 'section1234', 'text': { 'type': 'mrkdwn', 'text': 'Pick a date for the deadline.'},'accessory':{'type': 'datepicker', 'action_id': 'datepicker123', 'initial_date': '1990-04-28', 'placeholder': {'type': 'plain_text', 'text': 'Select a date'}}}",
-  }
-  
-  jsonData, err := json.Marshal(values)
-
-  var jsonStr = []byte(jsonData)
-
-  fmt.Println(jsonStr)
-
-	req, err := http.NewRequest("POST", "https://slack.com/api/chat.postMessage", bytes.NewBuffer(jsonStr))
-
-	req.Header.Set("Content-Type", "application/json")
-  req.Header.Set("Authorization", authStr)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
 }
